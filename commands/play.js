@@ -15,14 +15,14 @@ module.exports = {
             message.channel.send("you need to provide a name of song");
             return;
         }
-        if (!client.queue.has(message.guild.id)) client.queue.set(message.guild.id, [])
+        if (!client.queue.has(message.guild.id)) client.queue.set(message.guild.id, {loop : 0, songs : []})
         let connection = getVoiceConnection(message.guild.id)
         if (!connection) connection = JoinChannel(client, message)
 
         let queue = client.queue.get(message.guild.id)
-        if (queue.length === 0) {
+        if (queue.songs.length === 0) {
             let info = await PlaySong(message, args, connection)
-            queue.push({
+            queue.songs.push({
                 title: info.title,
                 duration: info.durationRaw,
                 url: info.url
@@ -41,7 +41,7 @@ module.exports = {
         }
         else {
             let info = await VideoDetails(message, args)
-            queue.push({
+            queue.songs.push({
                 title: info.title,
                 duration: info.durationRaw,
                 url: info.url
@@ -61,7 +61,6 @@ module.exports = {
         } 
     }
 }
-
 
 async function VideoDetails(message, args) {
     let info;
@@ -89,8 +88,9 @@ function JoinChannel(client, message) {
 
     let queue = client.queue.get(message.guild.id)
     player.on(AudioPlayerStatus.Idle, async () => {
-        queue.shift()
-        if (queue.length === 0) {
+        if(queue.loop === 0) queue.songs.shift()
+        else if(queue.loop === 2) queue.songs.push(queue.songs.shift())
+        if (queue.songs.length === 0) {
 
             let embed = new MessageEmbed()
             embed.color = '#f42c04'
@@ -105,7 +105,7 @@ function JoinChannel(client, message) {
             return DM;
         }
         else {
-            let source = await play.stream(queue[0].url)
+            let source = await play.stream(queue.songs[0].url)
             let resource = createAudioResource(source.stream, {
                 inputType: source.type
             })
@@ -114,7 +114,7 @@ function JoinChannel(client, message) {
             let embed = new MessageEmbed()
             embed.color = '#f4f1de'
             embed.title = `Next track`
-            embed.description = `${queue[0].title}\n${queue[0].url}\n\n**Duration**\n${queue[0].duration}`
+            embed.description = `${queue.songs[0].title}\n${queue.songs[0].url}\n\n**Duration**\n${queue.songs[0].duration}`
 
             let DM = message.channel.send({
                 embeds: [embed]
