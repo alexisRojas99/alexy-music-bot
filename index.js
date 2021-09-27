@@ -12,6 +12,7 @@ const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_
 client.commands = new Collection();
 client.events = new Collection();
 client.queue = new Map();
+client.loop = new Map();
 
 const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
 // we need commmand files
@@ -30,7 +31,6 @@ for (const file of eventFiles) {
 for (const file of commandFiles) {
         const command = require(`./commands/${file}`);
         client.commands.set(command.name, command);
-    
 }
 
 // Login to Discord with your client's token
