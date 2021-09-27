@@ -1,6 +1,6 @@
 {
   "name": "alexy-bot-2.0",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "This is a music bot called Alexy BOT",
   "main": "index.js",
   "scripts": {
@@ -10,6 +10,9 @@
   "keywords": [],
   "author": "Alexis Rojas",
   "license": "ISC",
+  "engines": {
+    "node": "16.9"
+  },
   "dependencies": {
     "@discordjs/opus": "^0.5.3",
     "@discordjs/voice": "^0.6.0",
