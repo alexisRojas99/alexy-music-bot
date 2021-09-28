@@ -15,9 +15,6 @@ module.exports = {
         message.channel.send({
             embeds: [embed]
         })
-        
-        client.queue.delete(message.guild.id)
-
         connection.destroy();
 
     }

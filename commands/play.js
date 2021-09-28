@@ -1,11 +1,21 @@
-const { getVoiceConnection, createAudioPlayer, createAudioResource, joinVoiceChannel, AudioPlayerStatus } = require('@discordjs/voice')
+const { getVoiceConnection, createAudioPlayer, createAudioResource, joinVoiceChannel, AudioPlayerStatus, VoiceConnectionStatus } = require('@discordjs/voice')
 const { MessageEmbed } = require('discord.js')
 const play = require('play-dl')
 
 module.exports = {
     name: "play",
     description: "play music in the voice channel",
+    cooldown : 5,
     async execute(client, message, args) {
+        
+        if(client.cooldown.has(message.member.id)) return message.channel.send('Please wait a second! searching the song')
+        else {
+            client.cooldown.set(message.member.id, this.name)
+            setTimeout(() => {
+                client.cooldown.delete(message.member.id)
+            }, this.cooldown * 1000)
+        }
+
         if (!message.member.voice.channel) {
             message.channel.send("you must be in a channel for the bot!");
             return;
@@ -25,32 +35,38 @@ module.exports = {
             queue.songs.push({
                 title: info.title,
                 duration: info.durationRaw,
+                thumbnail : info.thumbnail.url,
                 url: info.url
             })
 
             let embed = new MessageEmbed()
             embed.color = '#0dbf6f'
             embed.title = `Playing Song`
-            embed.description = `${info.title}\n${info.url}\n\n**Duration**\n${info.durationRaw}`
+            embed.setThumbnail(info.thumbnail.url)
+            embed.description = `[${info.title}](${info.url})`
+            embed.addField(`**Duration**`,`${info.durationRaw}`, true)
 
-            // let DM = message.channel.send({
-            //     embeds: [embed]
-            // })
-            return message.channel.send(`**Playing Song**\n${info.title}\n${info.url}\n**Duration**\n${info.durationRaw}`)
-            // return DM;
-        }
+            let DM = message.channel.send({
+                embeds: [embed]
+            })
+            // return message.channel.send(`**Playing Song**\n${info.title}\n${info.url}\n**Duration**\n${info.durationRaw}`)
+            return DM;
+        } 
         else {
             let info = await VideoDetails(message, args)
             queue.songs.push({
                 title: info.title,
                 duration: info.durationRaw,
+                thumbnail : info.thumbnail.url,
                 url: info.url
             })
 
             let embed = new MessageEmbed()
             embed.color = '#bab700'
             embed.title = `Added to queue`
-            embed.description = `${info.title}\n**Duration**\n${info.durationRaw}`
+            embed.setThumbnail(info.thumbnail.url)
+            embed.description = `[${info.title}](${info.url})`
+            embed.addField(`**Duration**`,`${info.durationRaw}`, true)
 
             let DM = message.channel.send({
                 embeds: [embed]
@@ -114,7 +130,9 @@ function JoinChannel(client, message) {
             let embed = new MessageEmbed()
             embed.color = '#f4f1de'
             embed.title = `Next track`
-            embed.description = `${queue.songs[0].title}\n${queue.songs[0].url}\n\n**Duration**\n${queue.songs[0].duration}`
+            embed.setThumbnail(queue.songs[0].thumbnail)
+            embed.description = `[${queue.songs[0].title}](${queue.songs[0].url})`
+            embed.addField(`**Duration**`,`${queue.songs[0].duration}`, true)
 
             let DM = message.channel.send({
                 embeds: [embed]
@@ -124,6 +142,20 @@ function JoinChannel(client, message) {
             return DM;
         }
     })
+
+    connection.on(VoiceConnectionStatus.Destroyed, () => {
+        player.removeAllListeners()
+        connection.removeAllListeners()
+        queue.songs = []
+    })
+
+    connection.on(VoiceConnectionStatus.Disconnected, () => {
+        player.removeAllListeners()
+        connection.removeAllListeners()
+        queue.songs = []
+        connection.destroy()
+    })
+
     return connection
 }
 
