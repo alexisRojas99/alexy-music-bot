@@ -171,20 +171,22 @@ function JoinChannel(client, message) {
     })
 
     connection.on(VoiceConnectionStatus.Destroyed, () => {
-        player.stop()
+        player.removeAllListeners()
         connection.removeAllListeners()
         queue.songs = []
     });
 
     connection.on(VoiceConnectionStatus.Disconnected, async (oldState, newState) => {
+        console.log (connection.state.status) 
         try {
             await Promise.race([
-                entersState(connection, VoiceConnectionStatus.Signalling, 1000),
-                entersState(connection, VoiceConnectionStatus.Connecting, 1000),
+                entersState(connection, VoiceConnectionStatus.Signalling, 5000),
+                entersState(connection, VoiceConnectionStatus.Connecting, 5000),
             ]);
             // Seems to be reconnecting to a new channel - ignore disconnect
         } catch (error) {
             // Seems to be a real disconnect which SHOULDN'T be recovered from
+            // console.log(error)
             connection.destroy();
         }
     });
