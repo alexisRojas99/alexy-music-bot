@@ -20,7 +20,14 @@ module.exports = {
             // console.log(client.queue.get(message.guild.id))
             player.stop();
         } else {
-            message.channel.send('you must add songs to the queue');
+            let embed = new MessageEmbed()
+            embed.color = '#db6443'
+            embed.title = `Player status`
+            embed.description = `you must add songs to the queue`
+
+            message.channel.send({
+                embeds: [embed]
+            })
         }
     }
 }
