@@ -1,6 +1,6 @@
 {
   "name": "alexy-bot-2.0",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "This is a music bot called Alexy BOT",
   "main": "index.js",
   "scripts": {
