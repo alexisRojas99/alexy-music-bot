@@ -34,7 +34,7 @@ module.exports = {
             }
             else if (queue.loop === 1) {
                 let embed = new MessageEmbed()
-                embed.color = '#002927'
+                embed.color = '#349AD5'
                 embed.description = `**Loop is for Current Song**`
 
                 let DM = message.channel.send({

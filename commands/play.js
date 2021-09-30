@@ -192,7 +192,7 @@ function JoinChannel(client, message) {
     });
 
     player.on(AudioPlayerStatus.Idle, () => {
-        let timer = setTimeout(() => { connection.destroy() }, 50000) // Destroys connection in next 50 seconds
+        let timer = setTimeout(() => { connection.destroy() }, 300000) // Destroys connection in next 300 seconds
         player.once(AudioPlayerStatus.Playing, () => { clearTimeout(timer) })
     });
 
