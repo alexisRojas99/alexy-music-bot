@@ -11,7 +11,7 @@
   "author": "Alexis Rojas",
   "license": "ISC",
   "engines": {
-    "node": "16.9"
+    "node": ">=16.0.0"
   },
   "dependencies": {
     "@discordjs/opus": "^0.5.3",

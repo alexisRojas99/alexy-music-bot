@@ -5,7 +5,7 @@ const play = require('play-dl')
 module.exports = {
     name: "play",
     description: "play music in the voice channel",
-    cooldown: 4,
+    cooldown: 5,
     async execute(client, message, args) {
 
 
@@ -19,9 +19,7 @@ module.exports = {
             })
 
             return DM;
-        }
-
-        else {
+        } else {
             client.cooldown.set(message.member.id, this.name)
             setTimeout(() => {
                 client.cooldown.delete(message.member.id)
@@ -192,7 +190,7 @@ function JoinChannel(client, message) {
     });
 
     player.on(AudioPlayerStatus.Idle, () => {
-        let timer = setTimeout(() => { connection.destroy() }, 300000) // Destroys connection in next 300 seconds
+        let timer = setTimeout(() => { connection.destroy() }, 120000) // Destroys connection in next 300 seconds
         player.once(AudioPlayerStatus.Playing, () => { clearTimeout(timer) })
     });
 
