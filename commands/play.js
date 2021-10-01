@@ -195,7 +195,7 @@ function JoinChannel(client, message) {
     });
 
     return connection
-}
+} 
 
 async function PlaySong(message, args, connection) {
     let source, info;

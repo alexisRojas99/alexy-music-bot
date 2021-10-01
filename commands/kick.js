@@ -7,6 +7,6 @@ module.exports = {
         // const member = message.mentions.members.first();
         // console.log(member.user.id)
         // member.kick();
-        message.channel.send('we working in this...')
+        message.channel.send('we working on this...')
     }
-} 
+}  
