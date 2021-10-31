@@ -3,7 +3,7 @@ const { MessageEmbed } = require('discord.js')
 const play = require('play-dl')
 
 module.exports = {
-    name: "play",
+    name: "pl",
     description: "play music in the voice channel",
     cooldown: 5,
     async execute(client, message, args) {
@@ -50,7 +50,7 @@ module.exports = {
             // message.channel.send("you need to provide a name of song");
             return;
         }
-        if (!client.queue.has(message.guild.id)) client.queue.set(message.guild.id, { loop: 0, songs: [] })
+        if (!client.queue.has(message.guild.id)) client.queue.set(message.guild.id, { id: message.guild.id, loop: 0, songs: [] })
         let connection = getVoiceConnection(message.guild.id)
         if (!connection) connection = JoinChannel(client, message)
 
@@ -75,6 +75,7 @@ module.exports = {
                 embeds: [embed]
             })
             // return message.channel.send(`**Playing Song**\n${info.title}\n${info.url}\n**Duration**\n${info.durationRaw}`)
+            console.log(queue)
             return DM;
         }
         else {
@@ -98,6 +99,7 @@ module.exports = {
             })
 
             // return message.channel.send(`**Song**\n${info.title}\n**added to queue**`)
+            console.log(queue)
             return DM;
         }
     }
@@ -171,21 +173,33 @@ function JoinChannel(client, message) {
     connection.on(VoiceConnectionStatus.Destroyed, () => {
         player.removeAllListeners()
         connection.removeAllListeners()
-        queue.songs = []
+        // queue.songs = []
+        // queue.loop = []
+        try {
+            client.queue.delete(queue.id);
+        } catch (error) {
+            console.log(error);
+        }
+        console.log(client.queue)
     });
-
     connection.on(VoiceConnectionStatus.Disconnected, async (oldState, newState) => {
-        console.log (connection.state.status) 
+        console.log(connection.state.status)
         try {
             await Promise.race([
-                entersState(connection, VoiceConnectionStatus.Signalling, 5000),
-                entersState(connection, VoiceConnectionStatus.Connecting, 5000),
+                entersState(connection, VoiceConnectionStatus.Signalling, 3000),
+                entersState(connection, VoiceConnectionStatus.Connecting, 3000),
             ]);
             // Seems to be reconnecting to a new channel - ignore disconnect
         } catch (error) {
             // Seems to be a real disconnect which SHOULDN'T be recovered from
             // console.log(error)
-            connection.destroy();
+            try {
+                // client.queue.delete(queue.id)
+                connection.destroy();
+            } catch (error) {
+                return;
+            }
+            
         }
     });
 
@@ -195,7 +209,7 @@ function JoinChannel(client, message) {
     });
 
     return connection
-} 
+}
 
 async function PlaySong(message, args, connection) {
     let source, info;

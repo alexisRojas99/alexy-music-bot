@@ -30,6 +30,7 @@ module.exports = {
                 let DM = message.channel.send({
                     embeds: [embed]
                 })
+                console.log(queue)
                 return DM;
             }
             else if (queue.loop === 1) {
@@ -40,6 +41,7 @@ module.exports = {
                 let DM = message.channel.send({
                     embeds: [embed]
                 })
+                console.log(queue)
                 return DM;
 
             } 
@@ -51,6 +53,7 @@ module.exports = {
                 let DM = message.channel.send({
                     embeds: [embed]
                 })
+                console.log(queue)
                 return DM;
             } 
         }
