@@ -2,7 +2,7 @@ const { getVoiceConnection } = require('@discordjs/voice')
 const { MessageEmbed } = require('discord.js')
 
 module.exports = {
-    name: "next",
+    name: "skip",
     description: "skip song in the voice channel",
     execute(client, message, args) {
         let connection = getVoiceConnection(message.guild.id)

@@ -3,7 +3,7 @@ const { MessageEmbed } = require('discord.js')
 const play = require('play-dl')
 
 module.exports = {
-    name: "pl",
+    name: "play",
     description: "play music in the voice channel",
     cooldown: 5,
     async execute(client, message, args) {
